@@ -13,6 +13,9 @@ const rateLimit = require('express-rate-limit');
 
 const app = express();
 
+// Required for express-rate-limit to work correctly on Vercel
+app.set('trust proxy', 1);
+
 // -------------------- LOGGER SETUP --------------------
 // Initialize logger BEFORE any middleware that uses it
 const logger = winston.createLogger({
