@@ -496,7 +496,7 @@ app.get('/api/health', async (req, res) => {
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     res.status(200).json({
       status: 'ok',
-      message: 'API is running',
+      message: 'API is running - VERIFIED LATEST VERSION',
       database: dbStatus,
       lastDbError: lastDbError,
       codeVersion: 'v3-reconnect-enabled',
