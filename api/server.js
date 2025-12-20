@@ -381,8 +381,13 @@ const authorizeAdmin = (req, res, next) => {
 };
 
 // -------------------- ROUTES --------------------
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'API is running' });
+});
+
 // Send OTP
-app.post('/send-otp', otpLimiter, async (req, res) => {
+app.post('/api/send-otp', otpLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     
@@ -451,7 +456,7 @@ app.post('/send-otp', otpLimiter, async (req, res) => {
 });
 
 // Verify OTP
-app.post('/verify-otp', async (req, res) => {
+app.post('/api/verify-otp', async (req, res) => {
   try {
     const { email, otp, password } = req.body;
     
@@ -612,7 +617,7 @@ app.post('login', loginLimiter, async (req, res) => {
 });
 
 // Place order
-app.post('/orders', authenticateUser, async (req, res) => {
+app.post('/api/orders', authenticateUser, async (req, res) => {
   try {
     const { items, totalAmount, customerInfo } = req.body;
     const userId = req.user.id;
@@ -762,7 +767,7 @@ app.get('orders/history', authenticateUser, async (req, res) => {
 });
 
 // Admin: Get all orders for dashboard
-app.get('/admin/orders', authenticateUser, authorizeAdmin, async (req, res) => {
+app.get('/api/admin/orders', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const { status, startDate, endDate } = req.query;
     
@@ -911,7 +916,7 @@ app.get('orders', authenticateUser, authorizeAdmin, async (req, res) => {
 
 // -------------------- MENU MANAGEMENT --------------------
 // Create or update a special menu item (admin only)
-app.post('/admin/menu/specials', authenticateUser, authorizeAdmin, async (req, res) => {
+app.post('/api/admin/menu/specials', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const { name, description, price, img } = req.body;
     if (!name || typeof price !== 'number') {
