@@ -493,13 +493,19 @@ app.get('/api/health', async (req, res) => {
       await connectDB();
     }
 
+    // Clear browser cache for this check
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     res.status(200).json({
       status: 'ok',
       message: 'API is running - VERIFIED LATEST VERSION',
       database: dbStatus,
       lastDbError: lastDbError,
-      codeVersion: 'v3-reconnect-enabled',
+      codeVersion: 'v4-cache-disabled',
+      buildId: 'BUILD_' + new Date().getTime(),
       timestamp: new Date().toISOString()
     });
   } catch (error) {
