@@ -1,0 +1,1 @@
+{"error":"Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-34e76ce0c8asm2976224a91.2 - gsmtp","host":"smtp.gmail.com","level":"error","message":"Email transporter verification failed","port":587,"secure":false,"timestamp":"2025-12-20T11:57:51.838Z"}
