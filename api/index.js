@@ -69,11 +69,10 @@ const loginLimiter = rateLimit({
 });
 
 // -------------------- DATABASE CONNECTION --------------------
-const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://sriramcharannandigam_db_user:nhLVZNCBIMvbheVy@cluster0.s4yrmqa.mongodb.net/bookAndBite?retryWrites=true&w=majority&appName=Cluster0';
+const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bookAndBite';
 
 // Connect to MongoDB (non-blocking for serverless)
 let mongooseConnection = null;
-let lastDbError = null;
 const connectDB = async () => {
   // Check if already connected AND connection is still alive
   if (mongooseConnection && mongoose.connection.readyState === 1) {
@@ -106,7 +105,6 @@ const connectDB = async () => {
     logger.info('MongoDB connected', { service: 'otp-service', timestamp: new Date().toISOString() });
     return mongooseConnection;
   } catch (err) {
-    lastDbError = err.message;
     logger.error('MongoDB connection failed', { error: err.message });
     return null;
   }
@@ -195,8 +193,8 @@ const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
 const smtpPort = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587; // default to STARTTLS
 const smtpSecure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : smtpPort === 465;
 const smtpHostIp = process.env.SMTP_HOST_IP; // optional: connect by IP but keep SNI
-const emailUser = process.env.EMAIL || 'sriramcharannandigam@gmail.com';
-const emailPass = process.env.EMAIL_PASSWORD || 'mlrldokqnmbmuiuf';
+const emailUser = process.env.EMAIL;
+const emailPass = process.env.EMAIL_PASSWORD;
 const emailDisabled = (process.env.EMAIL_DISABLED || '').toLowerCase() === 'true';
 
 let transporter = null;
@@ -421,7 +419,7 @@ const authenticateUser = (req, res, next) => {
       return res.status(401).json({ message: 'Authentication required. Please log in.' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_super_secret_jwt_key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     req.user = decoded;
     next();
   } catch (error) {
@@ -440,72 +438,14 @@ const authorizeAdmin = (req, res, next) => {
 };
 
 // -------------------- ROUTES --------------------
-// DB Connection Test Route
-app.get('/api/test-db', async (req, res) => {
-  try {
-    const currentStatus = mongoose.connection.readyState;
-    const statusMap = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
-
-    // Force a fresh connection attempt
-    let connectionResult = 'Already connected';
-    let errorDetails = null;
-
-    if (currentStatus !== 1) {
-      try {
-        await mongoose.connect(mongoUri, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-          serverSelectionTimeoutMS: 5000
-        });
-        connectionResult = 'Fresh connection successful';
-      } catch (e) {
-        connectionResult = 'Fresh connection failed';
-        errorDetails = e.message;
-      }
-    }
-
-    res.status(200).json({
-      test: 'Database Connectivity Test',
-      timestamp: new Date().toISOString(),
-      currentStatus: statusMap[mongoose.connection.readyState] || 'unknown',
-      connectionAttempt: connectionResult,
-      error: errorDetails,
-      config: {
-        uri_configured: !!mongoUri,
-        uri_starts_with: mongoUri ? mongoUri.substring(0, 15) + '...' : 'null'
-      }
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message, stack: err.stack });
-  }
-});
-
-// Base API route
-app.get('/api', (req, res) => {
-  res.status(200).json({ message: 'Book & Bite API is live' });
-});
-
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
   try {
-    // If disconnected, try to reconnect
-    if (mongoose.connection.readyState !== 1) {
-      await connectDB();
-    }
-
-    // Clear browser cache for this check
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     res.status(200).json({
       status: 'ok',
-      message: 'API is running - VERIFIED LATEST VERSION',
+      message: 'API is running',
       database: dbStatus,
-      lastDbError: lastDbError,
-      codeVersion: 'v4-cache-disabled',
-      buildId: 'BUILD_' + new Date().getTime(),
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -699,8 +639,7 @@ app.post('/api/login', loginLimiter, async (req, res) => {
       await connectDB();
       if (mongoose.connection.readyState !== 1) {
         return res.status(503).json({
-          message: 'Database connection unavailable. Please check MONGODB_URI environment variable.',
-          error: lastDbError
+          message: 'Database connection unavailable. Please check MONGODB_URI environment variable.'
         });
       }
     }
