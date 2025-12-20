@@ -34,10 +34,10 @@ app.use(express.json());
 
 // Debug middleware to log all requests (helpful for Vercel debugging)
 app.use((req, res, next) => {
-  logger.info(`Incoming request: ${req.method} ${req.url}`, { 
-    path: req.path, 
+  logger.info(`Incoming request: ${req.method} ${req.url}`, {
+    path: req.path,
     originalUrl: req.originalUrl,
-    baseUrl: req.baseUrl 
+    baseUrl: req.baseUrl
   });
   next();
 });
@@ -74,7 +74,7 @@ const connectDB = async () => {
   if (mongooseConnection) {
     return mongooseConnection;
   }
-  
+
   try {
     if (!mongoUri) {
       logger.error('MONGODB_URI is not defined in environment variables');
@@ -88,7 +88,7 @@ const connectDB = async () => {
       }
       logger.warn('Connecting to local MongoDB. Ensure MongoDB is running locally.');
     }
-    
+
     mongooseConnection = await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -112,7 +112,7 @@ connectDB().catch(err => {
 // User Schema
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: function() { return this.verified; } }, // Only required if user is verified
+  password: { type: String, required: function () { return this.verified; } }, // Only required if user is verified
   otp: { type: String },
   otpExpiry: { type: Date },
   verified: { type: Boolean, default: false },
@@ -137,9 +137,9 @@ const userSchema = new mongoose.Schema({
 // Order Schema
 const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
-  items: [{ 
-    name: String, 
-    price: Number, 
+  items: [{
+    name: String,
+    price: Number,
     quantity: Number,
     img: String
   }],
@@ -314,9 +314,9 @@ async function sendOTP(email, otp) {
 
 async function sendOrderConfirmationEmail(email, orderDetails) {
   const { orderId, tokenNumber, items, totalAmount, estimatedDelivery } = orderDetails;
-  
+
   // Create items HTML
-  const itemsHtml = items.map(item => 
+  const itemsHtml = items.map(item =>
     `<tr>
       <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
       <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
@@ -431,22 +431,27 @@ const authorizeAdmin = (req, res, next) => {
 };
 
 // -------------------- ROUTES --------------------
+// Base API route
+app.get('/api', (req, res) => {
+  res.status(200).json({ message: 'Book & Bite API is live' });
+});
+
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
   try {
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-    res.status(200).json({ 
-      status: 'ok', 
+    res.status(200).json({
+      status: 'ok',
       message: 'API is running',
       database: dbStatus,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
     logger.error('Health check error:', { error: error.message });
-    res.status(500).json({ 
-      status: 'error', 
+    res.status(500).json({
+      status: 'error',
       message: 'Health check failed',
-      error: error.message 
+      error: error.message
     });
   }
 });
@@ -455,26 +460,26 @@ app.get('/api/health', async (req, res) => {
 app.post('/api/send-otp', otpLimiter, async (req, res) => {
   try {
     const { email } = req.body;
-    
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
-    
+
     // Check if user exists
     let user = await User.findOne({ email });
-    
+
     // Generate a secure OTP
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-    
+
     if (user) {
       // If user exists but is already verified, don't allow OTP generation
       if (user.verified) {
         return res.status(400).json({ message: 'Email is already verified. Please login.' });
       }
-      
+
       // Track OTP attempts
       user.otp = otp;
       user.otpExpiry = otpExpiry;
@@ -491,9 +496,9 @@ app.post('/api/send-otp', otpLimiter, async (req, res) => {
         lastOtpRequest: new Date()
       });
     }
-    
+
     await user.save();
-    
+
     // Log OTP generation
     await new OtpLog({
       email,
@@ -501,13 +506,13 @@ app.post('/api/send-otp', otpLimiter, async (req, res) => {
       ipAddress: req.ip,
       userAgent: req.headers['user-agent']
     }).save();
-    
+
     // Send OTP via email
     const sent = await sendOTP(email, otp);
     if (!sent) {
       return res.status(500).json({ message: 'Failed to send OTP. Please try again.' });
     }
-    
+
     // In non-production, return OTP for testing convenience
     const responseBody = { message: 'OTP sent successfully' };
     if (process.env.NODE_ENV !== 'production') {
@@ -524,28 +529,28 @@ app.post('/api/send-otp', otpLimiter, async (req, res) => {
 app.post('/api/verify-otp', async (req, res) => {
   try {
     const { email, otp, password } = req.body;
-    
+
     // Validate inputs
     if (!email || !otp) {
       return res.status(400).json({ message: 'Email and OTP are required' });
     }
-    
+
     // If this is final verification with password, validate password strength
     if (password && password.length < 8) {
       return res.status(400).json({ message: 'Password must be at least 8 characters long' });
     }
-    
+
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     // Check if user is already verified
     if (user.verified) {
       return res.status(400).json({ message: 'Email is already verified. Please login.' });
     }
-    
+
     // Check OTP attempts
     if (user.otpAttempts >= 5) {
       // Log max attempts reached
@@ -555,14 +560,14 @@ app.post('/api/verify-otp', async (req, res) => {
         ipAddress: req.ip,
         userAgent: req.headers['user-agent']
       }).save();
-      
+
       return res.status(400).json({ message: 'Maximum OTP attempts reached. Please request a new OTP.' });
     }
-    
+
     // Increment attempt counter
     user.otpAttempts += 1;
     await user.save();
-    
+
     // Verify OTP
     if (user.otp !== otp) {
       // Log failed verification
@@ -572,10 +577,10 @@ app.post('/api/verify-otp', async (req, res) => {
         ipAddress: req.ip,
         userAgent: req.headers['user-agent']
       }).save();
-      
+
       return res.status(400).json({ message: 'Invalid OTP' });
     }
-    
+
     // Check if OTP is expired
     if (new Date() > user.otpExpiry) {
       // Log expired OTP
@@ -585,27 +590,27 @@ app.post('/api/verify-otp', async (req, res) => {
         ipAddress: req.ip,
         userAgent: req.headers['user-agent']
       }).save();
-      
+
       return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
     }
-    
+
     // If password is provided, hash and save it
     if (password) {
       // Use higher salt rounds for better security
       const salt = await bcrypt.genSalt(12);
       const hashedPassword = await bcrypt.hash(password, salt);
-      
+
       user.password = hashedPassword;
       user.verified = true;
     }
-    
+
     // Clear OTP fields
     user.otp = undefined;
     user.otpExpiry = undefined;
     user.otpAttempts = 0;
-    
+
     await user.save();
-    
+
     // Log successful verification
     await new OtpLog({
       email,
@@ -613,8 +618,8 @@ app.post('/api/verify-otp', async (req, res) => {
       ipAddress: req.ip,
       userAgent: req.headers['user-agent']
     }).save();
-    
-    res.status(200).json({ 
+
+    res.status(200).json({
       message: password ? 'Email verified and account created successfully' : 'OTP verified successfully',
       verified: user.verified
     });
@@ -631,8 +636,8 @@ app.post('/api/login', loginLimiter, async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       await connectDB();
       if (mongoose.connection.readyState !== 1) {
-        return res.status(503).json({ 
-          message: 'Database connection unavailable. Please check MONGODB_URI environment variable.' 
+        return res.status(503).json({
+          message: 'Database connection unavailable. Please check MONGODB_URI environment variable.'
         });
       }
     }
@@ -641,26 +646,26 @@ app.post('/api/login', loginLimiter, async (req, res) => {
 
     // Check if this is an admin login
     const isAdminEmail = email === process.env.ADMIN_EMAIL || email === 'admin@example.edu';
-    
+
     const user = await User.findOne({ email });
     if (!user) {
       // Create admin user if it doesn't exist yet
       if (isAdminEmail && password === (process.env.ADMIN_PASSWORD || 'admin123')) {
         // For admin, create a special token with admin role
         const adminToken = jwt.sign(
-          { id: 'admin', role: 'admin' }, 
-          process.env.JWT_SECRET || 'your-secret-key', 
+          { id: 'admin', role: 'admin' },
+          process.env.JWT_SECRET || 'your-secret-key',
           { expiresIn: '24h' }
         );
-        
+
         logger.info(`Admin login successful: ${email}`);
-        return res.status(200).json({ 
-          token: adminToken, 
+        return res.status(200).json({
+          token: adminToken,
           userId: 'admin',
           role: 'admin'
         });
       }
-      
+
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -676,10 +681,10 @@ app.post('/api/login', loginLimiter, async (req, res) => {
 
     // Determine if the user has admin role
     const role = isAdminEmail ? 'admin' : 'user';
-    
+
     const token = jwt.sign(
-      { id: user._id, role }, 
-      process.env.JWT_SECRET || 'your-secret-key', 
+      { id: user._id, role },
+      process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '1h' }
     );
 
@@ -734,7 +739,7 @@ app.post('/api/orders', authenticateUser, async (req, res) => {
     });
 
     await newOrder.save();
-    
+
     // Get user email for order confirmation (skip for admin token)
     let user = null;
     if (userId !== 'admin') {
@@ -743,7 +748,7 @@ app.post('/api/orders', authenticateUser, async (req, res) => {
     if (user && user.email) {
       // Send order confirmation email
       await sendOrderConfirmationEmail(
-        user.email, 
+        user.email,
         {
           orderId: newOrder._id,
           tokenNumber,
@@ -759,10 +764,10 @@ app.post('/api/orders', authenticateUser, async (req, res) => {
       );
       logger.info(`Order confirmation email sent to ${user.email} for order ${newOrder._id}`);
     }
-    
+
     // Emit real-time notification for admin dashboard (if using WebSockets)
     // This would be implemented with Socket.io in a production environment
-    
+
     res.status(201).json({
       message: 'Order placed successfully',
       orderId: newOrder._id,
@@ -779,14 +784,14 @@ app.post('/api/orders', authenticateUser, async (req, res) => {
 app.get('/api/profile', authenticateUser, async (req, res) => {
   try {
     const userId = req.user.id;
-    
+
     // Exclude sensitive information
     const user = await User.findById(userId).select('-password -otp -otpExpiry -otpAttempts');
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     res.status(200).json({ user });
   } catch (error) {
     logger.error('Error fetching user profile:', { error: error.message, stack: error.stack, userId: req.user.id });
@@ -799,25 +804,25 @@ app.put('/api/profile', authenticateUser, async (req, res) => {
   try {
     const userId = req.user.id;
     const { profile, preferences } = req.body;
-    
+
     // Only update allowed fields
     const updateData = {};
     if (profile) updateData.profile = profile;
     if (preferences) updateData.preferences = preferences;
-    
+
     const user = await User.findByIdAndUpdate(
       userId,
       { $set: updateData },
       { new: true, runValidators: true }
     ).select('-password -otp -otpExpiry -otpAttempts');
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
-    res.status(200).json({ 
+
+    res.status(200).json({
       message: 'Profile updated successfully',
-      user 
+      user
     });
   } catch (error) {
     logger.error('Error updating user profile:', { error: error.message, stack: error.stack, userId: req.user.id });
@@ -829,11 +834,11 @@ app.put('/api/profile', authenticateUser, async (req, res) => {
 app.get('/api/orders/history', authenticateUser, async (req, res) => {
   try {
     const userId = req.user.id;
-    
+
     const orders = await Order.find({ userId })
       .sort({ orderDate: -1 }) // Most recent first
       .select('-__v');
-    
+
     res.status(200).json({ orders });
   } catch (error) {
     logger.error('Error fetching order history:', { error: error.message, stack: error.stack, userId: req.user.id });
@@ -845,23 +850,23 @@ app.get('/api/orders/history', authenticateUser, async (req, res) => {
 app.get('/api/admin/orders', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const { status, startDate, endDate } = req.query;
-    
+
     // Build filter object
     const filter = {};
     if (status) filter.status = status;
-    
+
     // Add date range filter if provided
     if (startDate || endDate) {
       filter.orderDate = {};
       if (startDate) filter.orderDate.$gte = new Date(startDate);
       if (endDate) filter.orderDate.$lte = new Date(endDate);
     }
-    
+
     const orders = await Order.find(filter)
       .sort({ orderDate: -1 })
       .populate('userId', 'email profile.name profile.phone')
       .select('-__v');
-    
+
     res.status(200).json({ orders });
   } catch (error) {
     logger.error('Error fetching admin orders:', { error: error.message, stack: error.stack });
@@ -904,21 +909,21 @@ app.put('/api/admin/orders/:orderId', authenticateUser, authorizeAdmin, async (r
   try {
     const { orderId } = req.params;
     const { status } = req.body;
-    
+
     if (!['Pending', 'Processing', 'Completed', 'Cancelled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid order status' });
     }
-    
+
     const order = await Order.findByIdAndUpdate(
       orderId,
       { $set: { status } },
       { new: true }
     );
-    
+
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-    
+
     // Notify user about order status change via email (if user exists and not admin)
     if (order && order.userId && order.userId !== 'admin') {
       const user = await User.findById(order.userId).catch(() => null);
@@ -930,10 +935,10 @@ app.put('/api/admin/orders/:orderId', authenticateUser, authorizeAdmin, async (r
         });
       }
     }
-    
-    res.status(200).json({ 
+
+    res.status(200).json({
       message: 'Order status updated successfully',
-      order 
+      order
     });
   } catch (error) {
     logger.error('Error updating order status:', { error: error.message, stack: error.stack });
@@ -1051,17 +1056,17 @@ app.delete('/api/admin/menu/specials/:id', authenticateUser, authorizeAdmin, asy
 
 // Global error handler (must be last middleware)
 app.use((err, req, res, next) => {
-  logger.error('Unhandled error:', { 
-    error: err.message, 
+  logger.error('Unhandled error:', {
+    error: err.message,
     stack: err.stack,
     path: req.path,
     method: req.method
   });
-  
+
   res.status(err.status || 500).json({
     error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'production' 
-      ? 'An error occurred. Please try again later.' 
+    message: process.env.NODE_ENV === 'production'
+      ? 'An error occurred. Please try again later.'
       : err.message
   });
 });
@@ -1069,8 +1074,8 @@ app.use((err, req, res, next) => {
 // Catch-all handler for unmatched API routes (for debugging)
 app.use('/api', (req, res) => {
   logger.warn(`Unmatched API route: ${req.method} ${req.path}`);
-  res.status(404).json({ 
-    error: 'Not Found', 
+  res.status(404).json({
+    error: 'Not Found',
     message: `API route ${req.method} ${req.path} not found`,
     availableRoutes: [
       'GET /api/health',
