@@ -73,6 +73,7 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://sriramcharannandigam_
 
 // Connect to MongoDB (non-blocking for serverless)
 let mongooseConnection = null;
+let lastDbError = null;
 const connectDB = async () => {
   if (mongooseConnection) {
     return mongooseConnection;
@@ -101,6 +102,7 @@ const connectDB = async () => {
     logger.info('MongoDB connected', { service: 'otp-service', timestamp: new Date().toISOString() });
     return mongooseConnection;
   } catch (err) {
+    lastDbError = err.message;
     logger.error('MongoDB connection failed', { error: err.message });
     return null;
   }
@@ -447,6 +449,7 @@ app.get('/api/health', async (req, res) => {
       status: 'ok',
       message: 'API is running',
       database: dbStatus,
+      lastDbError: lastDbError,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -640,7 +643,8 @@ app.post('/api/login', loginLimiter, async (req, res) => {
       await connectDB();
       if (mongoose.connection.readyState !== 1) {
         return res.status(503).json({
-          message: 'Database connection unavailable. Please check MONGODB_URI environment variable.'
+          message: 'Database connection unavailable. Please check MONGODB_URI environment variable.',
+          error: lastDbError
         });
       }
     }
