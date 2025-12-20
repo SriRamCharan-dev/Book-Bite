@@ -67,13 +67,38 @@ const loginLimiter = rateLimit({
 
 // -------------------- DATABASE CONNECTION --------------------
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bookAndBite';
-mongoose
-  .connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => logger.info('MongoDB connected', { service: 'otp-service', timestamp: new Date().toISOString() }))
-  .catch(err => logger.error('MongoDB connection failed', { error: err.message }));
+
+// Connect to MongoDB (non-blocking for serverless)
+let mongooseConnection = null;
+const connectDB = async () => {
+  if (mongooseConnection) {
+    return mongooseConnection;
+  }
+  
+  try {
+    if (!mongoUri || mongoUri.includes('127.0.0.1') || mongoUri.includes('localhost')) {
+      logger.warn('MongoDB URI not configured or using localhost. Database operations will fail on Vercel.');
+      return null;
+    }
+    
+    mongooseConnection = await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000,
+    });
+    logger.info('MongoDB connected', { service: 'otp-service', timestamp: new Date().toISOString() });
+    return mongooseConnection;
+  } catch (err) {
+    logger.error('MongoDB connection failed', { error: err.message });
+    return null;
+  }
+};
+
+// Initialize connection (non-blocking)
+connectDB().catch(err => {
+  logger.error('Failed to initialize MongoDB connection', { error: err.message });
+});
 
 // -------------------- SCHEMAS --------------------
 // User Schema
@@ -399,8 +424,23 @@ const authorizeAdmin = (req, res, next) => {
 
 // -------------------- ROUTES --------------------
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'API is running' });
+app.get('/api/health', async (req, res) => {
+  try {
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    res.status(200).json({ 
+      status: 'ok', 
+      message: 'API is running',
+      database: dbStatus,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('Health check error:', { error: error.message });
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Health check failed',
+      error: error.message 
+    });
+  }
 });
 
 // Send OTP
@@ -579,6 +619,16 @@ app.post('/api/verify-otp', async (req, res) => {
 // Login
 app.post('/api/login', loginLimiter, async (req, res) => {
   try {
+    // Ensure database connection
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ 
+          message: 'Database connection unavailable. Please check MONGODB_URI environment variable.' 
+        });
+      }
+    }
+
     const { email, password } = req.body;
 
     // Check if this is an admin login
@@ -989,6 +1039,23 @@ app.delete('/api/admin/menu/specials/:id', authenticateUser, authorizeAdmin, asy
     logger.error('Error deleting special:', { error: error.message });
     res.status(500).json({ message: 'Failed to delete special' });
   }
+});
+
+// Global error handler (must be last middleware)
+app.use((err, req, res, next) => {
+  logger.error('Unhandled error:', { 
+    error: err.message, 
+    stack: err.stack,
+    path: req.path,
+    method: req.method
+  });
+  
+  res.status(err.status || 500).json({
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'production' 
+      ? 'An error occurred. Please try again later.' 
+      : err.message
+  });
 });
 
 // Catch-all handler for unmatched API routes (for debugging)
