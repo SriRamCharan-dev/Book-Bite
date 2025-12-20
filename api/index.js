@@ -448,6 +448,11 @@ app.get('/api', (req, res) => {
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
   try {
+    // If disconnected, try to reconnect
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
+
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     res.status(200).json({
       status: 'ok',
