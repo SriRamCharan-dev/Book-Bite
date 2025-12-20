@@ -440,6 +440,46 @@ const authorizeAdmin = (req, res, next) => {
 };
 
 // -------------------- ROUTES --------------------
+// DB Connection Test Route
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const currentStatus = mongoose.connection.readyState;
+    const statusMap = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+
+    // Force a fresh connection attempt
+    let connectionResult = 'Already connected';
+    let errorDetails = null;
+
+    if (currentStatus !== 1) {
+      try {
+        await mongoose.connect(mongoUri, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+          serverSelectionTimeoutMS: 5000
+        });
+        connectionResult = 'Fresh connection successful';
+      } catch (e) {
+        connectionResult = 'Fresh connection failed';
+        errorDetails = e.message;
+      }
+    }
+
+    res.status(200).json({
+      test: 'Database Connectivity Test',
+      timestamp: new Date().toISOString(),
+      currentStatus: statusMap[mongoose.connection.readyState] || 'unknown',
+      connectionAttempt: connectionResult,
+      error: errorDetails,
+      config: {
+        uri_configured: !!mongoUri,
+        uri_starts_with: mongoUri ? mongoUri.substring(0, 15) + '...' : 'null'
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message, stack: err.stack });
+  }
+});
+
 // Base API route
 app.get('/api', (req, res) => {
   res.status(200).json({ message: 'Book & Bite API is live' });
