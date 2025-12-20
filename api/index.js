@@ -75,9 +75,13 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://sriramcharannandigam_
 let mongooseConnection = null;
 let lastDbError = null;
 const connectDB = async () => {
-  if (mongooseConnection) {
+  // Check if already connected AND connection is still alive
+  if (mongooseConnection && mongoose.connection.readyState === 1) {
     return mongooseConnection;
   }
+
+  // Reset connection if it's stale
+  mongooseConnection = null;
 
   try {
     if (!mongoUri) {
