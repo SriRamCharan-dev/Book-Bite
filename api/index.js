@@ -69,7 +69,7 @@ const loginLimiter = rateLimit({
 });
 
 // -------------------- DATABASE CONNECTION --------------------
-const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bookAndBite';
+const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://sriramcharannandigam_db_user:nhLVZNCBIMvbheVy@cluster0.s4yrmqa.mongodb.net/bookAndBite?retryWrites=true&w=majority&appName=Cluster0';
 
 // Connect to MongoDB (non-blocking for serverless)
 let mongooseConnection = null;
@@ -189,8 +189,8 @@ const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
 const smtpPort = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587; // default to STARTTLS
 const smtpSecure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : smtpPort === 465;
 const smtpHostIp = process.env.SMTP_HOST_IP; // optional: connect by IP but keep SNI
-const emailUser = process.env.EMAIL;
-const emailPass = process.env.EMAIL_PASSWORD;
+const emailUser = process.env.EMAIL || 'sriramcharannandigam@gmail.com';
+const emailPass = process.env.EMAIL_PASSWORD || 'mlrldokqnmbmuiuf';
 const emailDisabled = (process.env.EMAIL_DISABLED || '').toLowerCase() === 'true';
 
 let transporter = null;
@@ -415,7 +415,7 @@ const authenticateUser = (req, res, next) => {
       return res.status(401).json({ message: 'Authentication required. Please log in.' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_super_secret_jwt_key');
     req.user = decoded;
     next();
   } catch (error) {
