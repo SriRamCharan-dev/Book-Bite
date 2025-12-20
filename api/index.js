@@ -76,9 +76,17 @@ const connectDB = async () => {
   }
   
   try {
-    if (!mongoUri || mongoUri.includes('127.0.0.1') || mongoUri.includes('localhost')) {
-      logger.warn('MongoDB URI not configured or using localhost. Database operations will fail on Vercel.');
+    if (!mongoUri) {
+      logger.error('MONGODB_URI is not defined in environment variables');
       return null;
+    }
+
+    if (mongoUri.includes('127.0.0.1') || mongoUri.includes('localhost')) {
+      if (process.env.NODE_ENV === 'production') {
+        logger.error('Using localhost MongoDB in production is not allowed. Please set a valid MONGODB_URI.');
+        return null;
+      }
+      logger.warn('Connecting to local MongoDB. Ensure MongoDB is running locally.');
     }
     
     mongooseConnection = await mongoose.connect(mongoUri, {
