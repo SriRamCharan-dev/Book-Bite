@@ -16,7 +16,11 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
+// Serve static files from public directory (only for local development)
+// Vercel handles static files automatically
+if (require.main === module) {
+  app.use(express.static('public'));
+}
 
 // -------------------- LOGGER SETUP --------------------
 const logger = winston.createLogger({
@@ -50,8 +54,9 @@ const loginLimiter = rateLimit({
 });
 
 // -------------------- DATABASE CONNECTION --------------------
+const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bookAndBite';
 mongoose
-  .connect('mongodb://127.0.0.1:27017/bookAndBite', {
+  .connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
@@ -973,8 +978,16 @@ app.delete('/api/admin/menu/specials/:id', authenticateUser, authorizeAdmin, asy
     res.status(500).json({ message: 'Failed to delete special' });
   }
 });
+
 // -------------------- SERVER START --------------------
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-});
+// Export app for Vercel serverless functions
+module.exports = app;
+
+// Only start server if running locally (not on Vercel)
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
+  });
+}
+
