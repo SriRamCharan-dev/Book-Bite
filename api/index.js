@@ -459,6 +459,7 @@ app.get('/api/health', async (req, res) => {
       message: 'API is running',
       database: dbStatus,
       lastDbError: lastDbError,
+      codeVersion: 'v3-reconnect-enabled',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
