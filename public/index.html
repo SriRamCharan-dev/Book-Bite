@@ -46,23 +46,34 @@
                         body: JSON.stringify({ email, password })
                     });
                     
+                    // Check if response is ok before parsing JSON
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorMessage = 'Invalid credentials';
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) {
+                            // If it's not JSON (e.g., HTML 404 page), use default message
+                            errorMessage = `Server error: ${response.status}`;
+                        }
+                        alert(errorMessage);
+                        return;
+                    }
+                    
                     const data = await response.json();
                     
-                    if (response.ok) {
-                        // Save token and user ID in localStorage
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('userId', data.userId);
-                        localStorage.setItem('userRole', data.role);
-                        
-                        if (data.role === 'admin') {
-                            alert("✅ Admin login successful! Redirecting to admin dashboard...");
-                            window.location.href = "admin.html";
-                        } else {
-                            alert("✅ Login successful! Redirecting to menu page...");
-                            window.location.href = "menu.html";
-                        }
+                    // Save token and user ID in localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('userRole', data.role);
+                    
+                    if (data.role === 'admin') {
+                        alert("✅ Admin login successful! Redirecting to admin dashboard...");
+                        window.location.href = "admin.html";
                     } else {
-                        alert(data.message || 'Invalid credentials');
+                        alert("✅ Login successful! Redirecting to menu page...");
+                        window.location.href = "menu.html";
                     }
                 } catch (error) {
                     console.error('Error:', error);

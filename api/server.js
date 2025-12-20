@@ -560,7 +560,7 @@ app.post('/api/verify-otp', async (req, res) => {
 });
 
 // Login
-app.post('login', loginLimiter, async (req, res) => {
+app.post('/api/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -701,7 +701,7 @@ app.post('/api/orders', authenticateUser, async (req, res) => {
 });
 
 // Get user profile
-app.get('profile', authenticateUser, async (req, res) => {
+app.get('/api/profile', authenticateUser, async (req, res) => {
   try {
     const userId = req.user.id;
     
@@ -720,7 +720,7 @@ app.get('profile', authenticateUser, async (req, res) => {
 });
 
 // Update user profile
-app.put('profile', authenticateUser, async (req, res) => {
+app.put('/api/profile', authenticateUser, async (req, res) => {
   try {
     const userId = req.user.id;
     const { profile, preferences } = req.body;
@@ -751,7 +751,7 @@ app.put('profile', authenticateUser, async (req, res) => {
 });
 
 // Get user order history
-app.get('orders/history', authenticateUser, async (req, res) => {
+app.get('/api/orders/history', authenticateUser, async (req, res) => {
   try {
     const userId = req.user.id;
     
@@ -795,7 +795,7 @@ app.get('/api/admin/orders', authenticateUser, authorizeAdmin, async (req, res) 
 });
 
 // Admin: Dashboard summary
-app.get('admin/dashboard', authenticateUser, authorizeAdmin, async (req, res) => {
+app.get('/api/admin/dashboard', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const orders = await Order.find().sort({ orderDate: -1 }).select('-__v');
     const totalOrders = orders.length;
@@ -825,7 +825,7 @@ app.get('admin/dashboard', authenticateUser, authorizeAdmin, async (req, res) =>
 });
 
 // Admin: Update order status
-app.put('admin/orders/:orderId', authenticateUser, authorizeAdmin, async (req, res) => {
+app.put('/api/admin/orders/:orderId', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
@@ -867,7 +867,7 @@ app.put('admin/orders/:orderId', authenticateUser, authorizeAdmin, async (req, r
 });
 
 // Legacy update order status endpoint - maintained for backward compatibility
-app.put('orders/:id', authenticateUser, authorizeAdmin, async (req, res) => {
+app.put('/api/orders/:id', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -904,7 +904,7 @@ app.put('orders/:id', authenticateUser, authorizeAdmin, async (req, res) => {
 });
 
 // Get all orders (for admin) - Legacy endpoint, maintained for backward compatibility
-app.get('orders', authenticateUser, authorizeAdmin, async (req, res) => {
+app.get('/api/orders', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const orders = await Order.find().sort({ orderDate: -1 });
     res.status(200).json(orders);
@@ -932,7 +932,7 @@ app.post('/api/admin/menu/specials', authenticateUser, authorizeAdmin, async (re
 });
 
 // Get specials (public)
-app.get('menu/specials', async (req, res) => {
+app.get('/api/menu/specials', async (req, res) => {
   try {
     const items = await MenuItem.find({ isSpecial: true }).sort({ createdAt: -1 }).select('-__v');
     res.status(200).json({ items });
@@ -943,7 +943,7 @@ app.get('menu/specials', async (req, res) => {
 });
 
 // Update a special (admin only)
-app.put('admin/menu/specials/:id', authenticateUser, authorizeAdmin, async (req, res) => {
+app.put('/api/admin/menu/specials/:id', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, price, img } = req.body;
@@ -962,7 +962,7 @@ app.put('admin/menu/specials/:id', authenticateUser, authorizeAdmin, async (req,
 });
 
 // Delete a special (admin only)
-app.delete('admin/menu/specials/:id', authenticateUser, authorizeAdmin, async (req, res) => {
+app.delete('/api/admin/menu/specials/:id', authenticateUser, authorizeAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const deleted = await MenuItem.findByIdAndDelete(id);
