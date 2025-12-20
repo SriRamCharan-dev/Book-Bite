@@ -1,0 +1,194 @@
+.poppins{
+  font-family: "Poppins", sans-serif;
+}
+body{
+    background-image: url(background.jpg);
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+.heading {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  padding-top: 2rem;
+  color: white;
+}
+p{
+  font-weight: 600;
+}
+.subheading {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.login{
+    margin: 0 auto;
+    padding: 2rem;
+    border: 1px solid black;
+    border-radius: 1rem;
+    background-color: #f9f9f9;
+    max-width: 25rem;
+    height: 19rem;
+    background: rgba(255, 255, 255, 0.1);       /* low opacity white */
+  backdrop-filter: blur(12px);                 /* blur background behind */
+  -webkit-backdrop-filter: blur(12px);         /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.2);  /* thin glass border */
+  border-radius: 1rem;                         /* rounded corners */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);  /* soft shadow */
+  padding: 2rem;                               /* spacing */
+  color: black;                                 /* text color */
+}
+.form-label{
+    padding-bottom: 1rem;
+    font-weight: 500;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    color: white;
+}
+.form-control{
+    border-radius: 8px;
+    padding: 0.5rem;
+    color: white;
+   
+}
+.btn.btn-primary{
+    cursor: pointer;
+}
+.signup-link{
+    color: white;
+    font-weight: 500;
+    margin-left: 3rem;
+}
+.fields{
+   display: block;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid black;
+  border-radius: 0.5rem 0.5rem 0 0;
+  margin: 0 0 0.5rem 0;       /* spacing between fields */
+  padding: 0.5rem;
+  background: transparent;
+  outline: none;
+  color: white;
+}
+.password{
+    margin-left: 0rem;
+}
+:root {
+  --primary-color: white;
+}
+
+.heading.typewriter {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 2rem auto 1rem;
+  color: var(--primary-color);
+  border-right: 0.15em solid var(--primary-color);
+  width: 0;
+  animation: typing 3s steps(10, end) forwards, 
+             blink-caret .75s step-end infinite;
+}
+a{
+    text-decoration: none;
+    color: blue;
+    margin-left: 6rem;
+    font-weight: 500;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 9ch }  /* "Book&Bite!" has 9 visible characters */
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--primary-color); }
+}
+.login:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+.signup{
+    margin: 0 auto;
+    padding: 2rem;
+    border: 1px solid black;
+    border-radius: 1rem;
+    background-color: #f9f9f9;
+    max-width: 25rem;
+    min-height: 19rem;
+    background: rgba(255, 255, 255, 0.1);       /* low opacity white */
+  backdrop-filter: blur(12px);                 /* blur background behind */
+  -webkit-backdrop-filter: blur(12px);         /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.2);  /* thin glass border */
+  border-radius: 1rem;                         /* rounded corners */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);  /* soft shadow */
+  padding: 2rem;                               /* spacing */
+  color: black;                                 /* text color */
+}
+.signup:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+.signup-step h3 {
+    color: white;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+.signup-step p {
+    color: white;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+.login-link{
+    color: white;
+    font-weight: 500;
+    margin-left: 3rem;
+}
+.btn-link {
+    color: white !important;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+.btn-link:hover {
+    color: #ccc !important;
+}
+.text-info {
+    color: #17a2b8 !important;
+    margin-bottom: 1rem;
+}
+.fields:hover{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);       /* low opacity white */
+  backdrop-filter: blur(12px);                 /* blur background behind */
+  -webkit-backdrop-filter: blur(12px);         /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.2);  /* thin glass border */
+  border-radius: 1rem;                         /* rounded corners */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);  /* soft shadow */
+  padding: 2rem;                               /* spacing */
+  color: #fff;                                 /* text color */
+}
+.fields::placeholder {
+    color: white;
+    opacity: 0.7; 
+}
+
+    body {
+      background-color: #f8f9fa;
+    }
+    .cart-container {
+      max-width: 900px;
+      margin: 2rem auto;
+    }

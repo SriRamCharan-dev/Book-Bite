@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book & Bite | Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2 class="logo">🍽️ Book & Bite</h2>
+      <ul>
+        <li class="active" data-tab="dashboard">🏠 Dashboard</li>
+        <li data-tab="orders">📦 Orders</li>
+        <li data-tab="menu">🍔 Menu</li>
+        <li data-tab="customers">👥 Customers</li>
+        <li data-tab="settings">⚙️ Settings</li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <input id="order-search" type="text" placeholder="Search by token..." />
+        <div class="profile">
+          <span class="notif">🔔</span>
+          <img src="https://i.pravatar.cc/40" alt="Admin" class="avatar">
+          <span class="admin-name">Admin</span>
+        </div>
+      </header>
+
+      <!-- Dashboard Tab -->
+      <div class="tab-content" id="dashboard">
+        <!-- Dashboard Cards -->
+        <section class="cards">
+          <div class="card">
+            <h3 id="total-orders">0</h3>
+            <p>Total Orders</p>
+          </div>
+          <div class="card">
+            <h3 id="total-revenue">₹0</h3>
+            <p>Total Revenue</p>
+          </div>
+          <div class="card">
+            <h3 id="pending-orders">0</h3>
+            <p>Pending Orders</p>
+          </div>
+          <div class="card">
+            <h3 id="completed-orders">0</h3>
+            <p>Completed Orders</p>
+          </div>
+        </section>
+
+        <!-- Recent Orders Table -->
+        <section class="table-section">
+          <h2>Recent Orders</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Token</th>
+                <th>Items</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recent-orders">
+              <tr>
+                <td colspan="6" class="text-center">Loading orders...</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+      <!-- Orders Tab -->
+      <div class="tab-content" id="orders" style="display: none;">
+        <h2>All Orders</h2>
+        
+        <div class="filters mb-4">
+          <div class="row">
+            <div class="col-md-4">
+              <select id="status-filter" class="form-select">
+                <option value="all">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Processing">Processing</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input type="date" id="date-filter" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <button id="refresh-orders" class="btn btn-primary">Refresh</button>
+            </div>
+          </div>
+        </div>
+        
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Token</th>
+              <th>Date & Time</th>
+              <th>Items</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="all-orders">
+            <tr>
+              <td colspan="7" class="text-center">Loading orders...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Other tabs can be added here -->
+      <div class="tab-content" id="menu" style="display: none;">
+        <h2>Menu Management</h2>
+        <div class="table-section" style="margin-top: 16px;">
+          <h3>Add Special Item</h3>
+          <form id="special-form" class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Name</label>
+              <input type="text" id="sp-name" class="form-control" placeholder="e.g., Chef's Special Biryani" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Price (₹)</label>
+              <input type="number" id="sp-price" class="form-control" placeholder="e.g., 149" required>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Image URL (optional)</label>
+              <input type="url" id="sp-img" class="form-control" placeholder="https://...">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <input type="text" id="sp-desc" class="form-control" placeholder="Short description (optional)">
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">Add Special</button>
+            </div>
+          </form>
+        </div>
+        <div class="table-section" style="margin-top: 16px;">
+          <h3>Current Specials</h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="specials-list">
+              <tr><td colspan="3" class="text-center">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="customers" style="display: none;">
+        <h2>Customer Management</h2>
+        <p>Customer management functionality will be added in future updates.</p>
+      </div>
+      
+      <div class="tab-content" id="settings" style="display: none;">
+        <h2>Settings</h2>
+        <p>Settings functionality will be added in future updates.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="order-details-content">
+          <!-- Order details will be populated here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <div id="status-update-buttons">
+            <!-- Status update buttons will be added here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const API_BASE = window.location.origin.startsWith('file') ? 'http://localhost:3000' : '';
+      const apiUrl = (path) => `${API_BASE}${path}`;
+      // Check if user is admin
+      const token = localStorage.getItem('token');
+      const userRole = localStorage.getItem('userRole');
+      
+      if (!token || userRole !== 'admin') {
+        alert('Access denied. Admin privileges required.');
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // Tab switching functionality
+      const tabs = document.querySelectorAll('.sidebar li');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabId = tab.getAttribute('data-tab');
+          
+          // Update active tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          // Show selected tab content
+          tabContents.forEach(content => {
+            content.style.display = content.id === tabId ? 'block' : 'none';
+          });
+          
+          // Load data for specific tabs
+          if (tabId === 'dashboard') {
+            loadDashboardData();
+          } else if (tabId === 'orders') {
+            loadAllOrders();
+          } else if (tabId === 'menu') {
+            loadSpecials();
+          }
+        });
+      });
+      
+      // Cache for search
+      let cachedDashboardRecent = [];
+      let cachedAllOrders = [];
+
+      // Load dashboard data on page load
+      loadDashboardData();
+      
+      // Status filter for orders
+      const statusFilter = document.getElementById('status-filter');
+      if (statusFilter) {
+        statusFilter.addEventListener('change', loadAllOrders);
+      }
+      
+      // Date filter for orders
+      const dateFilter = document.getElementById('date-filter');
+      if (dateFilter) {
+        dateFilter.addEventListener('change', loadAllOrders);
+      }
+      
+      // Load dashboard data
+      function loadDashboardData() {
+        fetch(apiUrl('/api/admin/dashboard'), {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load dashboard data');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Update dashboard cards
+          document.getElementById('total-orders').textContent = data.totalOrders;
+          document.getElementById('total-revenue').textContent = `₹${data.totalRevenue}`;
+          document.getElementById('pending-orders').textContent = data.pendingOrders;
+          document.getElementById('completed-orders').textContent = data.completedOrders;
+          
+          cachedDashboardRecent = data.recentOrders || [];
+
+          // Update recent orders table
+          const recentOrdersTable = document.getElementById('recent-orders');
+          if (data.recentOrders.length === 0) {
+            recentOrdersTable.innerHTML = '<tr><td colspan="6" class="text-center">No orders found</td></tr>';
+            return;
+          }
+          
+          recentOrdersTable.innerHTML = data.recentOrders.map(order => `
+            <tr>
+              <td>${order.id.substring(0, 8)}...</td>
+              <td>${order.tokenNumber}</td>
+              <td>${order.items.length} items</td>
+              <td>₹${order.totalAmount}</td>
+              <td>
+                <span class="status ${order.status.toLowerCase()}">${order.status}</span>
+              </td>
+              <td>
+                <select class="status-select" data-order-id="${order.id}">
+                  <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                  <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                  <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                  <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+              </td>
+            </tr>
+          `).join('');
+          
+          // Add event listeners to status selects
+          document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', updateOrderStatus);
+          });
+        });
+      }
+      
+      // Load all orders
+      function loadAllOrders() {
+        const statusValue = statusFilter ? statusFilter.value : 'all';
+        const dateValue = dateFilter ? dateFilter.value : '';
+        
+        fetch(apiUrl('/api/orders'), {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load orders');
+          }
+          return response.json();
+        })
+        .then(orders => {
+          // Filter orders
+          let filteredOrders = orders;
+          
+          if (statusValue !== 'all') {
+            filteredOrders = filteredOrders.filter(order => order.status === statusValue);
+          }
+          
+          if (dateValue) {
+            const filterDate = new Date(dateValue).toDateString();
+            filteredOrders = filteredOrders.filter(order => {
+              const orderDate = new Date(order.createdAt).toDateString();
+              return orderDate === filterDate;
+            });
+          }
+          
+          cachedAllOrders = orders;
+
+          // Update orders table
+          const ordersTable = document.querySelector('#orders table tbody');
+          if (!ordersTable) return;
+          
+          if (filteredOrders.length === 0) {
+            ordersTable.innerHTML = '<tr><td colspan="6" class="text-center">No orders found</td></tr>';
+            return;
+          }
+          
+          ordersTable.innerHTML = filteredOrders.map(order => `
+            <tr>
+              <td>${String(order._id || order.id).substring(0, 8)}...</td>
+              <td>${order.tokenNumber}</td>
+              <td>${new Date(order.orderDate || order.createdAt).toLocaleString()}</td>
+              <td>${order.items.length} items</td>
+              <td>₹${order.totalAmount}</td>
+              <td>
+                <span class="status ${order.status.toLowerCase()}">${order.status}</span>
+              </td>
+              <td>
+                <select class="status-select" data-order-id="${String(order._id || order.id)}">
+                  <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                  <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                  <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                  <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+              </td>
+            </tr>
+          `).join('');
+          
+          // Add event listeners to status selects
+          document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', updateOrderStatus);
+          });
+        });
+      }
+
+      // Search by token
+      const searchInput = document.getElementById('order-search');
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          const q = searchInput.value.trim();
+          // Recent orders (dashboard)
+          const recentOrdersTable = document.getElementById('recent-orders');
+          const recent = q ? (cachedDashboardRecent || []).filter(o => String(o.tokenNumber).includes(q)) : (cachedDashboardRecent || []);
+          if (recent.length === 0) {
+            recentOrdersTable.innerHTML = '<tr><td colspan="6" class="text-center">No matching orders</td></tr>';
+          } else {
+            recentOrdersTable.innerHTML = recent.map(order => `
+              <tr>
+                <td>${order.id.substring(0, 8)}...</td>
+                <td>${order.tokenNumber}</td>
+                <td>${order.items.length} items</td>
+                <td>₹${order.totalAmount}</td>
+                <td><span class="status ${order.status.toLowerCase()}">${order.status}</span></td>
+                <td>
+                  <select class="status-select" data-order-id="${order.id}">
+                    <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                    <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                    <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                  </select>
+                </td>
+              </tr>
+            `).join('');
+            document.querySelectorAll('.status-select').forEach(select => {
+              select.addEventListener('change', updateOrderStatus);
+            });
+          }
+
+          // All orders (orders tab)
+          const ordersTable = document.querySelector('#orders table tbody');
+          if (ordersTable) {
+            const list = q ? (cachedAllOrders || []).filter(o => String(o.tokenNumber).includes(q)) : (cachedAllOrders || []);
+            if (list.length === 0) {
+              ordersTable.innerHTML = '<tr><td colspan="7" class="text-center">No matching orders</td></tr>';
+            } else {
+              ordersTable.innerHTML = list.map(order => `
+                <tr>
+                  <td>${String(order._id || order.id).substring(0, 8)}...</td>
+                  <td>${order.tokenNumber}</td>
+                  <td>${new Date(order.orderDate || order.createdAt).toLocaleString()}</td>
+                  <td>${order.items.length} items</td>
+                  <td>₹${order.totalAmount}</td>
+                  <td><span class="status ${order.status.toLowerCase()}">${order.status}</span></td>
+                  <td>
+                    <select class="status-select" data-order-id="${String(order._id || order.id)}">
+                      <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                      <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                      <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                      <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                  </td>
+                </tr>
+              `).join('');
+              document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', updateOrderStatus);
+              });
+            }
+          }
+        });
+      }
+      
+      // Update order status
+      function updateOrderStatus(e) {
+        const orderId = e.target.getAttribute('data-order-id');
+        const newStatus = e.target.value;
+        
+        fetch(apiUrl(`/api/orders/${orderId}`), {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to update order status');
+          }
+          return response.json();
+        })
+        .then(data => {
+          alert(`Order status updated to ${newStatus}`);
+          
+          // Refresh data
+          const activeTab = document.querySelector('.sidebar li.active').getAttribute('data-tab');
+          if (activeTab === 'dashboard') {
+            loadDashboardData();
+          } else if (activeTab === 'orders') {
+            loadAllOrders();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to update order status');
+          // Reset select to previous value
+          e.target.value = e.target.getAttribute('data-previous-value');
+        });
+        
+        // Store previous value for potential rollback
+        e.target.setAttribute('data-previous-value', newStatus);
+      }
+
+      // Load specials
+      function loadSpecials() {
+        fetch(apiUrl('/api/menu/specials'))
+          .then(r => r.json())
+          .then(data => {
+            const list = data.items || [];
+            const tbody = document.getElementById('specials-list');
+            if (!tbody) return;
+            if (list.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="4" class="text-center">No specials yet</td></tr>';
+              return;
+            }
+            tbody.innerHTML = list.map(i => `
+              <tr>
+                <td>${i.name}</td>
+                <td>₹${Number(i.price).toFixed(2)}</td>
+                <td>${new Date(i.createdAt).toLocaleString()}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary sp-edit" data-id="${i._id}">Edit</button>
+                  <button class="btn btn-sm btn-danger sp-del" data-id="${i._id}">Delete</button>
+                </td>
+              </tr>
+            `).join('');
+
+            // Wire edit/delete actions
+            tbody.querySelectorAll('.sp-edit').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const row = btn.closest('tr');
+                const currentName = row.children[0].textContent;
+                const currentPrice = Number(row.children[1].textContent.replace('₹',''));
+                const newName = prompt('Update name', currentName);
+                if (newName === null) return;
+                const priceStr = prompt('Update price (₹)', String(currentPrice));
+                if (priceStr === null) return;
+                const newPrice = Number(priceStr);
+                if (!newName.trim() || isNaN(newPrice)) { alert('Invalid values'); return; }
+                fetch(apiUrl(`/api/admin/menu/specials/${id}`), {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                  body: JSON.stringify({ name: newName.trim(), price: newPrice })
+                })
+                .then(r => r.json().then(d => ({ ok: r.ok, d })))
+                .then(({ ok, d }) => { if (!ok) throw new Error(d.message || 'Failed'); loadSpecials(); })
+                .catch(err => alert(err.message));
+              });
+            });
+
+            tbody.querySelectorAll('.sp-del').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                if (!confirm('Delete this special?')) return;
+                fetch(apiUrl(`/api/admin/menu/specials/${id}`), { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
+                  .then(r => r.json().then(d => ({ ok: r.ok, d })))
+                  .then(({ ok, d }) => { if (!ok) throw new Error(d.message || 'Failed'); loadSpecials(); })
+                  .catch(err => alert(err.message));
+              });
+            });
+          })
+          .catch(() => {
+            const tbody = document.getElementById('specials-list');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center">Failed to load specials</td></tr>';
+          });
+      }
+
+      // Handle add special form
+      const specialForm = document.getElementById('special-form');
+      if (specialForm) {
+        specialForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('sp-name').value.trim();
+          const price = Number(document.getElementById('sp-price').value);
+          const img = document.getElementById('sp-img').value.trim();
+          const description = document.getElementById('sp-desc').value.trim();
+          if (!name || isNaN(price)) {
+            alert('Please provide a valid name and price');
+            return;
+          }
+          fetch(apiUrl('/api/admin/menu/specials'), {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ name, price, img, description })
+          })
+          .then(r => r.json().then(d => ({ ok: r.ok, d })))
+          .then(({ ok, d }) => {
+            if (!ok) throw new Error(d.message || 'Failed to add special');
+            alert('Special added');
+            specialForm.reset();
+            loadSpecials();
+          })
+          .catch(err => alert(err.message));
+        });
+      }
+    });
+  </script>
+</body>
+</html>

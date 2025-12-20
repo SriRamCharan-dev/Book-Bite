@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Book&Bite - Canteen Ordering</title>
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="menuStyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="book&bite logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+    <!-- External CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="card.css">
+  </head>
+  <body>
+    <div id="Section1">
+    <!-- Navigation Bar -->
+    <div class="navbar_section">
+        <nav class="navbar bg-light mb-4 shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="menu.html">
+    <img src="book&bite logo.png" alt="Book&Bite Logo" style="height: 40px; margin-right: 10px;">
+    <span class="logo-color" style="font-size: 1.75 rem; font-weight: 600;">Book&Bite</span>
+</a>
+                <form class="d-flex" role="search">
+                    <input id="search-bar"class="form-control me-2" type="search" placeholder="Search for dishes..." aria-label="Search">
+                    <button class="btn btn-danger" type="submit">Search</button>
+                </form>
+                <div class="user-icons">
+                    <a href="cart.html" class="position-relative text-dark">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span id="cart-counter" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </a>
+                    <a href="profile.html" class="text-dark">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Specials Section -->
+        <h1 class="mb-4 menu-heading">Chef's Specials</h1>
+        <div id="specials-row" class="row" style="margin-bottom:24px"></div>
+        <!-- Lunch Menu Section -->
+        <h1 class="mb-4 menu-heading">Today's Lunch Menu</h1>
+        <div class="row">
+            <!-- Card 1: Chicken Biryani -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=1974&auto=format&fit=crop" class="card-img-top" alt="Chicken Biryani">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Chicken Biryani</h5>
+                        <p class="card-text">Aromatic basmati rice cooked with tender chicken and exotic spices.</p>
+                        <h6 class="card-subtitle mb-2 text-muted">₹120</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2: veg biryani -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="veg biriyani.jpg" class="card-img-top" alt="Veg Biryani">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Veg Biryani</h5>
+                        <p class="card-text">Aromatic basmati rice cooked with mixed vegetables and exotic spices.</p>
+                        <h6 class="card-subtitle mb-2 text-muted">₹80</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3: Veg Fried Rice -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="veg friedrice.jpg" class="card-img-top" alt="Veg Fried Rice">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Veg Fried Rice</h5>
+                        <p class="card-text">Stir-fried rice with a mix of fresh, crunchy vegetables and savory sauces.</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹90</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+             <!-- Card 4: Chicken Fried Rice -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?q=80&w=1974&auto=format&fit=crop" class="card-img-top" alt="Chicken Fried Rice">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Chicken Fried Rice</h5>
+                        <p class="card-text">A classic dish with stir-fried rice, chicken, and assorted vegetables.</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹120</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+             <!-- Card 5: Chapathi -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="chapathi.jpg" class="card-img-top" alt="Chicken Biryani">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Chapathi</h5>
+                        <p class="card-text">Taste the comfort of every homemade bite 🍛🤎</p>
+                        <h6 class="card-subtitle mb-2 text-muted">₹35</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 5: Meals -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="Meals.jpg" class="card-img-top" alt="Chicken Biryani">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Meals</h5>
+                        <p class="card-text">Pure. Fresh. Flavors that feel like home 🌿🍲</p>
+                        <h6 class="card-subtitle mb-2 text-muted">₹80</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+        </div>
+
+        <!-- Evening Snacks Section -->
+        <h1 class="mb-4 mt-5 menu-heading">Snacks(Available at 3:00pm)</h1>
+        <div class="row">
+            <!-- Card 5: Samosa -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="samosa.avif" class="card-img-top" alt="Samosa">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Samosa (2 pcs)</h5>
+                        <p class="card-text">Crispy pastry filled with spiced potatoes and peas. A perfect evening snack.</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹30</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 6: French Fries -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="french fries.gif" class="card-img-top" alt="French Fries">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">French Fries</h5>
+                        <p class="card-text">Golden, crispy potato fries served with a side of tomato ketchup.</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹60</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 7: Veg Puff -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="veg puff.webp" class="card-img-top" alt="Veg Puff">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Veg Puff</h5>
+                        <p class="card-text">Flaky puff pastry filled with a savory mixed vegetable masala.</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹25</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+             <!-- Card 8: Coffee -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="coffe.jpg" class="card-img-top" alt="Coffee">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Coffee</h5>
+                        <p class="card-text">A freshly brewed cup of coffee to refresh your evening.</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹40</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h1 class="mb-4 mt-5 menu-heading">ChocoDrip & ChillSip</h1>
+        <div class="row">
+            <!-- Card 5: Sneakers -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="sneakers.jpg" class="card-img-top" alt="sneakers">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Sneakers</h5>
+                        <p class="card-text">Unwrap the power — bite into pure sneaker energy!</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹20</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 6: Dairy milk silk -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="dairymilk silk.jpg" class="card-img-top" alt="Dairymilk silk">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Dairymilk silk</h5>
+                        <p class="card-text">Pure indulgence, pure Silk 💜🍯</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹120</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 7: Thumsup -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="thumsup.jpg" class="card-img-top" alt="Thumsup">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Thumsup</h5>
+                        <p class="card-text">Taste the thunder ⚡🥤 Feel the rush!</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹20</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+             <!-- Card 8: Maaza -->
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="maaza.jpg" class="card-img-top" alt="Coffee">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Maaza</h5>
+                        <p class="card-text">Pure mango joy in every drop 🍹💛</p>
+                         <h6 class="card-subtitle mb-2 text-muted">₹20</h6>
+                        <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    const cartCounter = document.getElementById('cart-counter');
+    const specialsRow = document.getElementById('specials-row');
+
+    // Load existing cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Update cart counter
+    function updateCounter() {
+        const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+        cartCounter.innerText = totalQty;
+        cartCounter.style.display = totalQty > 0 ? 'block' : 'none';
+    }
+    updateCounter();
+
+    // Add to cart button click
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const card = button.closest('.card');
+            const name = card.querySelector('.card-title').innerText; // FIXED: use title
+            const price = parseInt(card.querySelector('.card-subtitle').innerText.replace('₹', ''));
+            const img = card.querySelector('img').src;
+
+            const existing = cart.find(item => item.name === name);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ name, price, img, qty: 1 });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCounter();
+
+            // Feedback animation
+            button.innerText = 'Added!';
+            button.classList.add('btn-success');
+            setTimeout(() => {
+                button.innerText = 'Add to cart';
+                button.classList.remove('btn-success');
+            }, 1000);
+        });
+    });
+
+    // Load specials
+    fetch('/api/menu/specials')
+      .then(r => r.json())
+      .then(data => {
+        const items = data.items || [];
+        if (!items.length) return;
+        specialsRow.innerHTML = items.map(item => `
+          <div class="col-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm">
+              <img src="${item.img || 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1887&auto=format&fit=crop'}" class="card-img-top" alt="${item.name}">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">${item.name}</h5>
+                <p class="card-text">${item.description || ''}</p>
+                <h6 class="card-subtitle mb-2 text-muted">₹${Number(item.price).toFixed(2)}</h6>
+                <button class="btn btn-danger mt-auto add-to-cart-btn">Add to cart</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Reattach add-to-cart on newly added buttons
+        specialsRow.querySelectorAll('.add-to-cart-btn').forEach(button => {
+          button.addEventListener('click', function () {
+            const card = button.closest('.card');
+            const name = card.querySelector('.card-title').innerText;
+            const price = parseInt(card.querySelector('.card-subtitle').innerText.replace('₹', ''));
+            const img = card.querySelector('img').src;
+            const existing = cart.find(item => item.name === name);
+            if (existing) {
+              existing.qty++;
+            } else {
+              cart.push({ name, price, img, qty: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCounter();
+            button.innerText = 'Added!';
+            button.classList.add('btn-success');
+            setTimeout(() => {
+              button.innerText = 'Add to cart';
+              button.classList.remove('btn-success');
+            }, 1000);
+          });
+        });
+      })
+      .catch(() => {});
+});
+document.getElementById('search-bar').addEventListener('keyup', function() {
+    let query = this.value.toLowerCase();
+    let cards = document.querySelectorAll('.col-6.col-md-4.col-lg-3.mb-4'); // Selector for the card column
+
+    cards.forEach(card => {
+        let title = card.querySelector('.card-title').innerText.toLowerCase();
+        if (title.includes(query)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+</script>
+
+</div>
+  </body>
+</html>

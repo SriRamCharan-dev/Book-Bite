@@ -1,0 +1,36 @@
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.cart-container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 30px;
+  margin-top: 50px;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+}
+
+.cart-item {
+  transition: transform 0.2s ease;
+}
+.cart-item:hover {
+  transform: scale(1.02);
+}
+
+.total-section h4 {
+  color: #e23744; /* Zomato red */
+}
+
+.btn-success {
+  background-color: #e23744 !important;
+  border: none;
+}
+.btn-success:hover {
+  background-color: #c81f2f !important;
+}
+.cart-img {
+  height: 70px;
+  width: 70px;
+  object-fit: cover;
+  border-radius: 10px;
+}

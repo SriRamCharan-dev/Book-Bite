@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Foodie — Profile</title>
+  <link rel="stylesheet" href="profile.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Profile Visual -->
+    <div class="card profile-visual">
+      <div style="display:flex; align-items:center; gap:14px">
+        <div class="avatar" id="avatar">VP</div>
+        <div>
+          <div class="name" id="displayName">Venkatesh Pinjala</div>
+          <div class="meta">Food lover • 124 orders • Member since 2021</div>
+        </div>
+      </div>
+
+      <div class="trust">
+        <div>
+          <div class="muted-small">Trust score</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:6px">
+            <div class="stars" id="stars">
+              <div class="star">4.6</div>
+            </div>
+            <div class="muted-small">Top 18% of users</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wallet">
+        <div class="wallet-row">
+          <div>
+            <div class="muted-small">Wallet balance</div>
+            <div style="font-weight:800; font-size:20px" id="walletBalance">₹ 1,250</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center">
+            <button class="btn" id="addMoneyBtn">Add Money</button>
+            <button class="btn secondary" id="payBtn">Pay</button>
+          </div>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:8px; align-items:center">
+          <div class="muted-small">Saved cards: <strong>2</strong></div>
+          <div style="flex:1"></div>
+          <div class="muted-small">Rewards: <strong>₹ 120</strong></div>
+        </div>
+      </div>
+
+      <div class="quick-stats">
+        <div class="stat">
+          <div class="num" id="ordersCount">124</div>
+          <div class="lbl">Total orders</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="favCuisines">3</div>
+          <div class="lbl">Fav cuisines</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="coupons">4</div>
+          <div class="lbl">Active coupons</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:8px">
+        <button class="btn" id="editProfile">Edit profile</button>
+        <a href="index.html"><button class="btn secondary" id="logout">Log out</button></a>
+
+      </div>
+    </div>
+
+    <!-- Profile Main -->
+    <div class="card profile-main">
+      <div class="section-title">
+        <h3>Profile details</h3>
+        <div class="muted-small">Last updated: Sep 14, 2025</div>
+      </div>
+
+      <div class="profile-info">
+        <div class="field">
+          <div class="label">Full name</div>
+          <div class="value" id="fullName">Venkatesh Pinjala</div>
+        </div>
+        <div class="field">
+          <div class="label">Phone</div>
+          <div class="value" id="phone">+91 98765 43210</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Email</div>
+          <div class="value" id="email">venkatesh@example.com</div>
+        </div>
+        <div class="field">
+          <div class="label">Default address</div>
+          <div class="value" id="address">Kakinada , surampalem</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title"><h3>Recent orders</h3><div class="muted-small">View all</div></div>
+        <div class="orders" id="ordersList"></div>
+      </div>
+
+      <div>
+        <div class="section-title"><h3>Payment & wallet</h3><div class="muted-small">Manage cards & balance</div></div>
+        <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap">
+          <div style="flex:1; min-width:220px" class="field">
+            <div class="label">Saved cards</div>
+            <div class="value">VISA • **** 4242</div>
+            <div class="muted-small" style="margin-top:8px">Auto-pay enabled</div>
+          </div>
+          <div style="flex:1; min-width:220px" class="field">
+            <div class="label">UPI</div>
+            <div class="value">venkatesh@gmail.com</div>
+            <div class="muted-small" style="margin-top:8px">Primary</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <h4 style="margin:0 0 10px 0">Add money to wallet</h4>
+      <div class="muted-small">Enter amount (₹)</div>
+      <input type="number" id="addAmount" placeholder="500" min="1" />
+      <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end">
+        <button class="btn secondary" id="modalCancel">Cancel</button>
+        <button class="btn" id="modalAdd">Add</button>
+      </div>
+    </div>
+  </div>
+
+ <script>
+// Fetch profile and orders from API
+document.addEventListener('DOMContentLoaded', async function() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Please login first');
+    window.location.href = 'index.html';
+    return;
+  }
+
+  // Load profile
+  try {
+    const resp = await fetch('/api/profile', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await resp.json();
+    if (resp.ok && data.user) {
+      const user = data.user;
+      const name = user.profile?.name || user.email.split('@')[0];
+      const phone = user.profile?.phone || '—';
+      const address = user.profile?.address || '—';
+
+      document.getElementById('displayName').textContent = name;
+      document.getElementById('fullName').textContent = name;
+      document.getElementById('phone').textContent = phone;
+      document.getElementById('email').textContent = user.email;
+      document.getElementById('address').textContent = address;
+      document.getElementById('avatar').textContent = name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+    } else {
+      alert(data.message || 'Failed to load profile');
+    }
+  } catch (e) {
+    console.error(e);
+    alert('Failed to load profile');
+  }
+
+  // Load order history
+  try {
+    const resp = await fetch('/api/orders/history', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await resp.json();
+    const orders = data.orders || [];
+    renderOrders(orders);
+  } catch (e) {
+    console.error(e);
+    renderOrders([]);
+  }
+
+  // Edit profile -> prompt and save minimal fields
+  document.getElementById('editProfile').addEventListener('click', async ()=>{
+    const current = document.getElementById('fullName').textContent;
+    const name = prompt('Update full name', current);
+    if(!name) return;
+    try {
+      const resp = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ profile: { name } })
+      });
+      const data = await resp.json();
+      if (resp.ok && data.user) {
+        document.getElementById('fullName').textContent = data.user.profile?.name || name;
+        document.getElementById('displayName').textContent = data.user.profile?.name || name;
+        document.getElementById('avatar').textContent = (data.user.profile?.name || name).split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+      } else {
+        alert(data.message || 'Failed to update profile');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Failed to update profile');
+    }
+  });
+
+  document.getElementById('logout').addEventListener('click', ()=>{
+    localStorage.clear();
+  });
+});
+
+function renderOrders(orders){
+  const el = document.getElementById('ordersList');
+  el.innerHTML = '';
+  if(!orders.length){
+    el.innerHTML = '<div class="empty">No recent orders. Order something tasty!</div>';
+    return;
+  }
+  orders.forEach(o=>{
+    const div = document.createElement('div'); div.className='order';
+    const title = (o.items && o.items.length) ? `${o.items[0].name}${o.items.length>1?` +${o.items.length-1} more`:''}` : 'Canteen Order';
+    div.innerHTML = `
+      <div class="left">
+        <div class="dish-thumb">🍽</div>
+        <div>
+          <div style="font-weight:700">${title}</div>
+          <div class="meta">${new Date(o.orderDate).toLocaleDateString()} • ${o._id}</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:800; color:var(--black)">₹ ${(o.totalAmount||0).toFixed(2)}</div>
+        <div class="muted-small">${o.status}</div>
+      </div>
+    `;
+    el.appendChild(div);
+  });
+}
+ </script>
+</body>
+</html>
