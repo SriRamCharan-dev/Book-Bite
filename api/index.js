@@ -13,16 +13,8 @@ const rateLimit = require('express-rate-limit');
 
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-// Serve static files from public directory (only for local development)
-// Vercel handles static files automatically
-if (require.main === module) {
-  app.use(express.static('public'));
-}
-
 // -------------------- LOGGER SETUP --------------------
+// Initialize logger BEFORE any middleware that uses it
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -35,6 +27,26 @@ const logger = winston.createLogger({
     new winston.transports.Console({ format: winston.format.simple() })
   ]
 });
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Debug middleware to log all requests (helpful for Vercel debugging)
+app.use((req, res, next) => {
+  logger.info(`Incoming request: ${req.method} ${req.url}`, { 
+    path: req.path, 
+    originalUrl: req.originalUrl,
+    baseUrl: req.baseUrl 
+  });
+  next();
+});
+
+// Serve static files from public directory (only for local development)
+// Vercel handles static files automatically
+if (require.main === module) {
+  app.use(express.static('public'));
+}
 
 // -------------------- RATE LIMITERS --------------------
 const otpLimiter = rateLimit({
@@ -977,6 +989,26 @@ app.delete('/api/admin/menu/specials/:id', authenticateUser, authorizeAdmin, asy
     logger.error('Error deleting special:', { error: error.message });
     res.status(500).json({ message: 'Failed to delete special' });
   }
+});
+
+// Catch-all handler for unmatched API routes (for debugging)
+app.use('/api', (req, res) => {
+  logger.warn(`Unmatched API route: ${req.method} ${req.path}`);
+  res.status(404).json({ 
+    error: 'Not Found', 
+    message: `API route ${req.method} ${req.path} not found`,
+    availableRoutes: [
+      'GET /api/health',
+      'POST /api/login',
+      'POST /api/send-otp',
+      'POST /api/verify-otp',
+      'GET /api/profile',
+      'PUT /api/profile',
+      'GET /api/orders/history',
+      'POST /api/orders',
+      'GET /api/menu/specials'
+    ]
+  });
 });
 
 // -------------------- SERVER START --------------------
